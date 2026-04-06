@@ -86,17 +86,19 @@ def _prepare_display_df(df: pd.DataFrame, fundamentals: bool) -> pd.DataFrame:
     return out
 
 
-def _style_df(df: pd.DataFrame) -> pd.io.formats.style.Styler:
-    """Warnai return positif/negatif (hanya tampilan)."""
+def _style_df(df: pd.DataFrame, *, dark_theme: bool = True) -> pd.io.formats.style.Styler:
+    """Warnai return positif/negatif (hanya tampilan). Warna disesuaikan kontras light vs dark."""
     ret_cols = [c for c in ("ret_1m_pct", "ret_3m_pct") if c in df.columns]
+    pos = "#4ade80" if dark_theme else "#1e8449"
+    neg = "#f87171" if dark_theme else "#c0392b"
 
     def color_ret(v: float) -> str:
         if pd.isna(v):
             return ""
         if v > 0:
-            return "color: #1e8449; font-weight: 600"
+            return f"color: {pos}; font-weight: 600"
         if v < 0:
-            return "color: #c0392b; font-weight: 600"
+            return f"color: {neg}; font-weight: 600"
         return ""
 
     sty = df.style
@@ -164,14 +166,56 @@ def _cached_full_run(use_fundamentals: bool, price_period: str) -> dict:
     }
 
 
-def _inject_mobile_table_css() -> None:
-    st.markdown(
+# Override ke tema terang bila user mematikan mode gelap (config default = dark).
+_LIGHT_THEME_OVERRIDES = """
+  .stApp, [data-testid="stAppViewContainer"], section.main {
+    background-color: #ffffff !important;
+    color: #31333f !important;
+  }
+  [data-testid="stSidebar"], section[data-testid="stSidebar"] {
+    background-color: #f0f2f6 !important;
+    border-right: 1px solid #e6e9ef !important;
+  }
+  [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] label,
+  [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
+    color: #31333f !important;
+  }
+  div[data-testid="stHeader"] {
+    background-color: #ffffff !important;
+  }
+  [data-testid="stMetric"] {
+    background-color: #ffffff !important;
+    border: 1px solid #e6e9ef !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem !important;
+  }
+  [data-testid="stMetric"] label, [data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: #31333f !important;
+  }
+  .stAlert, [data-testid="stAlertContentSuccess"], [data-testid="stAlertContentInfo"],
+  [data-testid="stAlertContentWarning"] {
+    color: #31333f !important;
+  }
+  div[data-testid="stExpander"] details summary { color: #31333f !important; }
+  .stTextInput input, .stSelectbox div[data-baseweb="select"] {
+    background-color: #ffffff !important;
+    color: #31333f !important;
+  }
+"""
+
+
+def _inject_theme_and_table_css(*, light_mode: bool) -> None:
+    """Scroll horizontal untuk tabel (HP) + opsi override tema terang."""
+    parts = [
         """
-<style>
   div[data-testid="stDataFrame"] { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
   div[data-testid="stDataFrame"] > div { min-width: min(100%, 720px); }
-</style>
-        """,
+"""
+    ]
+    if light_mode:
+        parts.append(_LIGHT_THEME_OVERRIDES)
+    st.markdown(
+        "<style>" + "\n".join(parts) + "</style>",
         unsafe_allow_html=True,
     )
 
@@ -259,15 +303,16 @@ def main() -> None:
         layout="wide",
         initial_sidebar_state="expanded",
     )
-    _inject_mobile_table_css()
-
-    st.title("Skrining LQ45")
-    st.caption(
-        "Ringkasan metrik dari Yahoo Finance — bukan saran investasi. "
-        "Verifikasi ke emiten/IDX sebelum keputusan."
-    )
 
     with st.sidebar:
+        st.header("Tampilan")
+        dark_mode = st.toggle(
+            "Mode gelap",
+            value=True,
+            help="Default gelap (sesuai tema aplikasi). Matikan untuk tampilan terang.",
+        )
+        light_mode = not dark_mode
+        st.divider()
         st.header("Pengaturan")
         view_mode = st.radio(
             "Tampilan baris",
@@ -300,6 +345,14 @@ def main() -> None:
         )
         price_period = PERIOD_OPTIONS[period_label]
         bypass_cache = st.button("Refresh data (abaikan cache 2 menit)")
+
+    _inject_theme_and_table_css(light_mode=light_mode)
+
+    st.title("Skrining LQ45")
+    st.caption(
+        "Ringkasan metrik dari Yahoo Finance — bukan saran investasi. "
+        "Verifikasi ke emiten/IDX sebelum keputusan."
+    )
 
     if bypass_cache:
         _cached_full_run.clear()
@@ -392,7 +445,7 @@ def main() -> None:
 
     row_h = min(720, max(120, 42 + len(disp) * 36))
     st.dataframe(
-        _style_df(disp),
+        _style_df(disp, dark_theme=not light_mode),
         column_config=cfg,
         use_container_width=True,
         hide_index=True,
