@@ -19,7 +19,7 @@
 - [API untuk pengembang](#api-untuk-pengembang)
 - [Data & keterbatasan](#data--keterbatasan)
 - [Memperbarui daftar LQ45](#memperbarui-daftar-lq45)
-- [Deploy (mis. HP / internet)](#deploy-mis-hp--internet)
+- [Deploy (mis. HP / internet)](#deploy-mis-hp--internet) — detail Streamlit Cloud: [DEPLOY.md](DEPLOY.md)
 - [Dokumen terkait](#dokumen-terkait)
 
 ---
@@ -143,8 +143,11 @@ Untuk penjelasan kolom dalam bahasa sederhana, baca **[CARA-BACA-TABEL.md](CARA-
 ```
 lq45-recommender/
 ├── README.md                 # Dokumen ini
+├── DEPLOY.md                 # Panduan deploy Streamlit Community Cloud
 ├── CARA-BACA-TABEL.md        # Panduan membaca kolom (pemula)
 ├── requirements.txt
+├── .streamlit/
+│   └── config.toml           # Opsi Streamlit (lokal & cloud)
 ├── constituents.py           # Daftar kode LQ45 & simbol Yahoo (.JK)
 ├── recommender.py            # Pipeline: unduh → metrik → skor → CLI
 └── streamlit_app.py          # Dashboard Streamlit
@@ -193,12 +196,14 @@ result: RunResult = run_with_meta(use_fundamentals=True, price_period="6mo")
 
 ## Deploy (mis. HP / internet)
 
-Untuk akses dari **browser di HP** tanpa menjalankan laptop:
+**Streamlit Community Cloud (gratis, disarankan untuk app ini):** ikuti panduan langkah demi langkah di **[DEPLOY.md](DEPLOY.md)** (login GitHub → *New app* → branch `main` → main file **`streamlit_app.py`**).
 
-1. Push repositori ke **GitHub** (publik untuk tier gratis).
-2. Deploy ke **[Streamlit Community Cloud](https://streamlit.io/cloud)** dengan menunjuk ke `streamlit_app.py` dan `requirements.txt`.
+Ringkas:
 
-Perhatikan batasan gratis (sleep, resource) dan bahwa **kode publik** terlihat orang. Alternatif: VPS, Render, Railway, atau jalankan di rumah + **Tailscale** / **Cloudflare Tunnel** (lebih teknis).
+1. Push repositori ke **GitHub** (**publik** untuk tier gratis Streamlit).
+2. Di [share.streamlit.io](https://share.streamlit.io), hubungkan repo, pilih **`streamlit_app.py`**, deploy.
+
+Perhatikan batasan gratis (sleep saat idle, cold start, resource) dan bahwa **kode publik** terlihat semua orang. Alternatif: VPS, Render, Railway, atau jalankan di rumah + **Tailscale** / **Cloudflare Tunnel** (lebih teknis).
 
 ---
 
@@ -207,6 +212,7 @@ Perhatikan batasan gratis (sleep, resource) dan bahwa **kode publik** terlihat o
 | File | Isi |
 |------|-----|
 | [CARA-BACA-TABEL.md](CARA-BACA-TABEL.md) | Arti tiap kolom untuk pemula |
+| [DEPLOY.md](DEPLOY.md) | Deploy gratis ke Streamlit Community Cloud |
 
 ---
 

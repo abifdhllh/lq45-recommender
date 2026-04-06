@@ -1,0 +1,7 @@
+# Digunakan lokal & Streamlit Community Cloud (beberapa opsi di Cloud bisa di-override lewat UI).
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
