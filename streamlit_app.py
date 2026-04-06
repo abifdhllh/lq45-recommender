@@ -75,6 +75,22 @@ _COL_HELP = {
     ),
 }
 
+# Label singkat untuk dropdown penjelasan (HP / tanpa hover)
+_COL_HELP_LABELS: dict[str, str] = {
+    "code": "Kode",
+    "score": "Skor",
+    "last_price": "Harga",
+    "ret_1m_pct": "Ret 1m %",
+    "ret_3m_pct": "Ret 3m %",
+    "vol_ann_pct": "Vol tahunan %",
+    "sharpe_63d": "Sharpe ~63d",
+    "trailing_pe": "PE trailing",
+    "forward_pe": "PE forward",
+    "roe": "ROE",
+    "div_pct": "Div yield %",
+    "error": "Error",
+}
+
 
 def _prepare_display_df(df: pd.DataFrame, fundamentals: bool) -> pd.DataFrame:
     out = df.copy()
@@ -297,6 +313,22 @@ def _compact_column_order(fundamentals: bool) -> list[str]:
     return base + ["error"]
 
 
+def _render_column_help_touch_friendly(disp_cols: list[str]) -> None:
+    """Penjelasan per kolom tanpa hover (penting untuk HP / layar sentuh)."""
+    keys = [k for k in disp_cols if k in _COL_HELP]
+    if not keys:
+        return
+    st.markdown("##### Bantuan kolom")
+    choice = st.selectbox(
+        "Pilih kolom untuk melihat penjelasan",
+        options=[""] + keys,
+        format_func=lambda k: "— Pilih —" if k == "" else _COL_HELP_LABELS.get(k, k),
+        help="Di HP tidak ada hover di header tabel; pakai menu ini. Di desktop, hover ikon ⓘ pada header juga bisa.",
+    )
+    if choice:
+        st.info(_COL_HELP[choice])
+
+
 def main() -> None:
     st.set_page_config(
         page_title="Skrining LQ45",
@@ -437,10 +469,13 @@ def main() -> None:
         f"Tabel: **{len(disp)}** baris — periode unduhan harga `{price_period}` — skor relatif ke seluruh LQ45."
     )
     st.markdown(
-        "**Tip:** hover **header kolom** (ⓘ) untuk pengingat singkat. Penjelasan lengkap di bagian bawah."
+        "**Tip:** di **komputer**, arahkan mouse ke **header kolom** (ikon ⓘ) untuk ringkasan. "
+        "Di **HP** tidak ada hover — pakai **menu di bawah** untuk penjelasan per kolom."
     )
 
     disp_cols = list(disp.columns)
+    _render_column_help_touch_friendly(disp_cols)
+
     cfg = _build_column_config(disp_cols)
 
     row_h = min(720, max(120, 42 + len(disp) * 36))
@@ -452,7 +487,7 @@ def main() -> None:
         height=row_h,
     )
 
-    with st.expander("Penjelasan kolom (baca saat lupa)", expanded=False):
+    with st.expander("Penjelasan lengkap semua kolom (teks)", expanded=False):
         st.markdown(
             """
 ##### Selalu ada di tabel
