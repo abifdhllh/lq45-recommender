@@ -1,0 +1,23 @@
+README.md
+  032a1d8b40c9df82 32,108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "e6b5a85738a51dcb1e1a3eed7702d578442cd1b5",
+  "prompts": {
+    "032a1d8b40c9df82": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7f8244f2-67f3-4066-8252-6856e75ce456",
+        "model": "composer-2-fast"
+      },
+      "human_author": "Abi FS",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 1,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
