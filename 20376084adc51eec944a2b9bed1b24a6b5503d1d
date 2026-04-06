@@ -1,0 +1,29 @@
+requirements.txt
+  032a1d8b40c9df82 1-2
+.streamlit/config.toml
+  032a1d8b40c9df82 1-7
+README.md
+  032a1d8b40c9df82 22,146,149-150,199,201,203-206,215
+DEPLOY.md
+  032a1d8b40c9df82 1-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "20376084adc51eec944a2b9bed1b24a6b5503d1d",
+  "prompts": {
+    "032a1d8b40c9df82": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7f8244f2-67f3-4066-8252-6856e75ce456",
+        "model": "composer-2-fast"
+      },
+      "human_author": "Abi FS",
+      "messages": [],
+      "total_additions": 109,
+      "total_deletions": 7,
+      "accepted_lines": 108,
+      "overriden_lines": 0
+    }
+  }
+}
