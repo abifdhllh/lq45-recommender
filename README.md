@@ -107,7 +107,7 @@ Buka browser di alamat yang ditampilkan (biasanya `http://localhost:8501`).
 
 - **Mode gelap / terang:** toggle di bagian **Tampilan** (default gelap, selaras `.streamlit/config.toml`)
 - **Tampilan baris:** Top N (urut skor) atau semua konstituen LQ45
-- **Fundamental:** mengaktifkan kolom PE, ROE, yield dividen (lebih lambat)
+- **Fundamental:** default **aktif** di dashboard (kolom PE, ROE, yield dividen — lebih lambat); bisa dimatikan di sidebar
 - **Tampilan ringkas:** menyembunyikan beberapa kolom (nyaman di HP)
 - **Periode data harga:** sama konsepnya dengan `--period` di CLI
 - **Cari kode saham:** filter substring / beberapa kode

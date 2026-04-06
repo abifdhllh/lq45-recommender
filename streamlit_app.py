@@ -363,7 +363,7 @@ def main() -> None:
             )
         fundamentals = st.toggle(
             "Sertakan fundamental (PE, ROE, dividen — lebih lambat)",
-            value=False,
+            value=True,
         )
         compact = st.toggle(
             "Tampilan ringkas (cocok untuk layar kecil / HP)",
