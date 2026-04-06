@@ -1,0 +1,23 @@
+streamlit_app.py
+  032a1d8b40c9df82 78-93,316-331,472-473,477-478,490
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "3cbd04b27b075c0dc49d5d1fc7867a8760cd689a",
+  "prompts": {
+    "032a1d8b40c9df82": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7f8244f2-67f3-4066-8252-6856e75ce456",
+        "model": "composer-2-fast"
+      },
+      "human_author": "Abi FS",
+      "messages": [],
+      "total_additions": 43,
+      "total_deletions": 8,
+      "accepted_lines": 37,
+      "overriden_lines": 0
+    }
+  }
+}
