@@ -1,4 +1,5 @@
-# Digunakan lokal & Streamlit Community Cloud (beberapa opsi di Cloud bisa di-override lewat UI).
+# Tema default = gelap (selaras toggle "Mode gelap" default ON).
+# Streamlit menerapkan tema ke dataframe, select, tombol — tanpa CSS manual yang bentrok.
 
 [browser]
 gatherUsageStats = false

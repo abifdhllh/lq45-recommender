@@ -69,6 +69,15 @@ _COL_HELP = {
     "div_pct": (
         "Perkiraan yield dividen tahunan (%) dari data Yahoo. Bukan jaminan dividen tahun depan sama."
     ),
+    "debt_to_equity": (
+        "Debt-to-equity: perbandingan **total utang** vs **ekuitas pemegang saham** (angka dari Yahoo). "
+        "Makin tinggi = leverage utang makin besar relatif ke modal sendiri. Nilai ideal beda-beda per sektor; "
+        "bandingkan dengan rekan industri dan laporan keuangan resmi."
+    ),
+    "kap_pasar_miliar": (
+        "Kapitalisasi pasar perkiraan dalam **miliar rupiah** (harga × saham beredar, dari Yahoo). "
+        "Ukuran kira-kira ‘besar kecilnya’ perusahaan di pasar; bukan saran beli/jual."
+    ),
     "error": (
         "Jika terisi, data emiten ini kurang/gagal diambil. Jangan dipakai untuk perbandingan "
         "sebelum dicek manual di sekuritas/IDX."
@@ -88,6 +97,8 @@ _COL_HELP_LABELS: dict[str, str] = {
     "forward_pe": "PE forward",
     "roe": "ROE",
     "div_pct": "Div yield %",
+    "debt_to_equity": "Utang / ekuitas",
+    "kap_pasar_miliar": "Kap. pasar (Mrd Rp)",
     "error": "Error",
 }
 
@@ -99,6 +110,11 @@ def _prepare_display_df(df: pd.DataFrame, fundamentals: bool) -> pd.DataFrame:
             lambda v: round(v * 100, 2) if pd.notna(v) else None
         )
         out = out.drop(columns=["dividend_yield"])
+    if fundamentals and "market_cap" in out.columns:
+        out["kap_pasar_miliar"] = out["market_cap"].apply(
+            lambda v: round(float(v) / 1e9, 2) if pd.notna(v) and v is not None else None
+        )
+        out = out.drop(columns=["market_cap"])
     return out
 
 
@@ -182,54 +198,123 @@ def _cached_full_run(use_fundamentals: bool, price_period: str) -> dict:
     }
 
 
-# Override ke tema terang bila user mematikan mode gelap (config default = dark).
-_LIGHT_THEME_OVERRIDES = """
-  .stApp, [data-testid="stAppViewContainer"], section.main {
+# Saat user meminta mode terang sementara config.toml = dark, kita paksa “kulit” terang +
+# widget BaseWeb/tombol/input agar selaras. Jangan menyentuh anak [data-testid="stDataFrame"]
+# (bisa merusak Glide); variabel --gdg-* hanya di root container.
+_LIGHT_MODE_OVERRIDES = """
+  .stApp { color-scheme: light !important; }
+  .stApp, [data-testid="stAppViewContainer"], section.main, .block-container {
     background-color: #ffffff !important;
-    color: #31333f !important;
+    color: #262730 !important;
+  }
+  section.main .stCaption, [data-testid="stCaption"] {
+    color: #4b5563 !important;
+    opacity: 1 !important;
+  }
+  section.main .stMarkdown p, section.main .stMarkdown li,
+  section.main .stMarkdown span:not([style*="color"]) {
+    color: #262730 !important;
+  }
+  section.main h1, section.main h2, section.main h3, section.main h4,
+  .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5 {
+    color: #1f2937 !important;
+  }
+  [data-testid="stHeader"] {
+    background-color: #ffffff !important;
   }
   [data-testid="stSidebar"], section[data-testid="stSidebar"] {
     background-color: #f0f2f6 !important;
-    border-right: 1px solid #e6e9ef !important;
+    border-right: 1px solid #e5e7eb !important;
   }
   [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] label,
-  [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
-    color: #31333f !important;
-  }
-  div[data-testid="stHeader"] {
-    background-color: #ffffff !important;
+  [data-testid="stSidebar"] span, [data-testid="stSidebar"] p,
+  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+    color: #262730 !important;
   }
   [data-testid="stMetric"] {
     background-color: #ffffff !important;
-    border: 1px solid #e6e9ef !important;
+    border: 1px solid #e5e7eb !important;
     border-radius: 0.5rem !important;
-    padding: 0.5rem !important;
   }
   [data-testid="stMetric"] label, [data-testid="stMetric"] [data-testid="stMetricValue"] {
-    color: #31333f !important;
+    color: #262730 !important;
   }
-  .stAlert, [data-testid="stAlertContentSuccess"], [data-testid="stAlertContentInfo"],
+  [data-testid="stAlertContentSuccess"] {
+    background-color: #ecfdf5 !important;
+    color: #14532d !important;
+    border: 1px solid #a7f3d0 !important;
+  }
+  [data-testid="stAlertContentInfo"] {
+    background-color: #eff6ff !important;
+    color: #1e40af !important;
+    border: 1px solid #bfdbfe !important;
+  }
   [data-testid="stAlertContentWarning"] {
-    color: #31333f !important;
+    background-color: #fffbeb !important;
+    color: #92400e !important;
+    border: 1px solid #fde68a !important;
   }
-  div[data-testid="stExpander"] details summary { color: #31333f !important; }
-  .stTextInput input, .stSelectbox div[data-baseweb="select"] {
+  div[data-testid="stExpander"] details summary {
+    color: #262730 !important;
+  }
+  .stTextInput input, .stTextInput textarea {
     background-color: #ffffff !important;
-    color: #31333f !important;
+    color: #262730 !important;
+    border-color: #d1d5db !important;
+  }
+  .stTextInput input::placeholder, .stTextInput textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+  }
+  [data-baseweb="select"] > div, [data-baseweb="select"] input {
+    background-color: #ffffff !important;
+    color: #262730 !important;
+    border-color: #d1d5db !important;
+  }
+  [data-baseweb="popover"], [data-baseweb="menu"], ul[role="listbox"] {
+    background-color: #ffffff !important;
+    color: #262730 !important;
+  }
+  [data-baseweb="menu"] li, [role="option"] {
+    color: #262730 !important;
+  }
+  .stButton > button {
+    background-color: #ffffff !important;
+    color: #1f2937 !important;
+    border: 1px solid #d1d5db !important;
+  }
+  .stButton > button:hover {
+    border-color: #9ca3af !important;
+    color: #111827 !important;
+  }
+  .stSlider label, .stSlider span, .stRadio label, .stRadio span,
+  .stToggle label, .stToggle span {
+    color: #262730 !important;
+  }
+  [data-testid="stDataFrame"] {
+    --gdg-bg-cell: #ffffff !important;
+    --gdg-bg-cell-medium: #f9fafb !important;
+    --gdg-bg-header: #f3f4f6 !important;
+    --gdg-bg-header-hovered: #e5e7eb !important;
+    --gdg-bg-header-selected: #e5e7eb !important;
+    --gdg-border-color: #e5e7eb !important;
+    --gdg-fg-color: #262730 !important;
+    --gdg-bg-selected: #dbeafe !important;
+    --gdg-bg-cell-disabled: #f9fafb !important;
   }
 """
 
 
-def _inject_theme_and_table_css(*, light_mode: bool) -> None:
-    """Scroll horizontal untuk tabel (HP) + opsi override tema terang."""
+def _inject_theme_and_table_css(*, dark_mode: bool) -> None:
+    """Scroll horizontal tabel. Mode gelap = native Streamlit (config.toml dark). Mode terang = override CSS."""
     parts = [
         """
   div[data-testid="stDataFrame"] { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
   div[data-testid="stDataFrame"] > div { min-width: min(100%, 720px); }
 """
     ]
-    if light_mode:
-        parts.append(_LIGHT_THEME_OVERRIDES)
+    if not dark_mode:
+        parts.append(_LIGHT_MODE_OVERRIDES)
     st.markdown(
         "<style>" + "\n".join(parts) + "</style>",
         unsafe_allow_html=True,
@@ -297,6 +382,16 @@ def _build_column_config(
             format="%.2f",
             help=_COL_HELP["div_pct"],
         ),
+        "debt_to_equity": st.column_config.NumberColumn(
+            "Utang / ekuitas",
+            format="%.2f",
+            help=_COL_HELP["debt_to_equity"],
+        ),
+        "kap_pasar_miliar": st.column_config.NumberColumn(
+            "Kap. pasar (Mrd Rp)",
+            format="%.2f",
+            help=_COL_HELP["kap_pasar_miliar"],
+        ),
         "error": st.column_config.TextColumn(
             "Error",
             width="medium",
@@ -309,7 +404,15 @@ def _build_column_config(
 def _compact_column_order(fundamentals: bool) -> list[str]:
     base = ["code", "score", "last_price", "ret_1m_pct", "ret_3m_pct"]
     if fundamentals:
-        return base + ["trailing_pe", "forward_pe", "roe", "div_pct", "error"]
+        return base + [
+            "trailing_pe",
+            "forward_pe",
+            "roe",
+            "div_pct",
+            "debt_to_equity",
+            "kap_pasar_miliar",
+            "error",
+        ]
     return base + ["error"]
 
 
@@ -341,9 +444,8 @@ def main() -> None:
         dark_mode = st.toggle(
             "Mode gelap",
             value=True,
-            help="Default gelap (sesuai tema aplikasi). Matikan untuk tampilan terang.",
+            help="Mengikuti tema gelap Streamlit (config). Matikan untuk tampilan terang (override CSS pada halaman & widget).",
         )
-        light_mode = not dark_mode
         st.divider()
         st.header("Pengaturan")
         view_mode = st.radio(
@@ -378,7 +480,7 @@ def main() -> None:
         price_period = PERIOD_OPTIONS[period_label]
         bypass_cache = st.button("Refresh data (abaikan cache 2 menit)")
 
-    _inject_theme_and_table_css(light_mode=light_mode)
+    _inject_theme_and_table_css(dark_mode=dark_mode)
 
     st.title("Skrining LQ45")
     st.caption(
@@ -480,7 +582,7 @@ def main() -> None:
 
     row_h = min(720, max(120, 42 + len(disp) * 36))
     st.dataframe(
-        _style_df(disp, dark_theme=not light_mode),
+        _style_df(disp, dark_theme=dark_mode),
         column_config=cfg,
         use_container_width=True,
         hide_index=True,
@@ -528,6 +630,12 @@ Return on equity — seberapa besar laba dibanding ekuitas (biasanya ditampilkan
 
 **Div yield %**  
 Perkiraan yield dividen tahunan dari harga (%), dari Yahoo. Dividen masa depan bisa berubah atau dibatalkan.
+
+**Utang / ekuitas**  
+Rasio utang terhadap ekuitas (debt-to-equity) dari Yahoo: seberapa besar utang dibanding modal sendiri. Angka tinggi = leverage utang lebih besar; tafsir “baik/buruk” tergantung industri dan kebijakan perusahaan.
+
+**Kap. pasar (Mrd Rp)**  
+Kapitalisasi pasar dalam **miliar rupiah** (dihitung dari data Yahoo). Gambaran skala perusahaan di pasar; bukan ukuran untung atau murah/mahal saham.
 
 ---
 

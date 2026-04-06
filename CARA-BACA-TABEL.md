@@ -108,6 +108,24 @@ Angka ini bisa **negatif** kalau return rata-rata harian buruk dibanding volatil
 
 ---
 
+### `debt_to_equity` (di UI: **Utang / ekuitas**)
+
+**Debt-to-equity** dari Yahoo: perbandingan **total utang** dengan **ekuitas pemegang saham**.
+
+- Angka **lebih tinggi** berarti utang relatif lebih besar dibanding modal sendiri (leverage lebih tinggi). Apakah “sehat” tergantung **industri** dan kebijakan perusahaan.
+- Di **Streamlit**, kolom ini pakai label singkat **Utang / ekuitas**; angka dari Yahoo bisa berbeda definisi dengan laporan IDX — silang dengan laporan keuangan jika putuskan investasi.
+
+---
+
+### `market_cap` / **Kap. pasar (Mrd Rp)** di UI
+
+**Kapitalisasi pasar** = perkiraan nilai seluruh saham beredar di pasar (harga × jumlah saham), dari Yahoo.
+
+- Di **Streamlit**, ditampilkan dalam **miliar rupiah** (kolom **Kap. pasar (Mrd Rp)**) agar lebih mudah dibaca daripada angka penuh.
+- Di **CLI / JSON** mentah mungkin masih bernama `market_cap` dalam rupiah penuh — sama artinya, beda format.
+
+---
+
 ### `div_pct`
 
 **Perkiraan yield dividen tahunan dalam persen** (dari data Yahoo, sudah dibantu dinormalisasi program).

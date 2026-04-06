@@ -397,7 +397,9 @@ def main() -> None:
         "sharpe_63d",
     ]
     if args.fundamentals:
-        cols.extend(["trailing_pe", "forward_pe", "roe", "dividend_yield"])
+        cols.extend(
+            ["trailing_pe", "forward_pe", "roe", "dividend_yield", "debt_to_equity", "market_cap"]
+        )
     show = df[[c for c in cols if c in df.columns]]
 
     if args.json:
@@ -417,6 +419,11 @@ def main() -> None:
                 lambda v: np.nan if pd.isna(v) else v * 100.0
             )
             disp = disp.drop(columns=["dividend_yield"])
+        if args.fundamentals and "market_cap" in disp.columns:
+            disp["kap_miliar_rp"] = disp["market_cap"].apply(
+                lambda v: np.nan if pd.isna(v) else round(float(v) / 1e9, 2)
+            )
+            disp = disp.drop(columns=["market_cap"])
         print(disp.to_string(index=False, float_format=lambda x: f"{x:,.4f}"))
         print(
             "\nCatatan: skor = kombinasi persentil momentum, volatilitas (lebih rendah lebih baik), "
@@ -426,6 +433,9 @@ def main() -> None:
         if args.fundamentals:
             print(
                 "Kolom div_pct = perkiraan yield dividen tahunan (%) dari Yahoo; data bisa salah/tunda."
+            )
+            print(
+                "Kolom kap_miliar_rp = kapitalisasi pasar (miliar rupiah); debt_to_equity = rasio utang/ekuitas (Yahoo)."
             )
         print("Data dari Yahoo Finance; verifikasi ke emiten/IDX sebelum keputusan investasi.")
 
