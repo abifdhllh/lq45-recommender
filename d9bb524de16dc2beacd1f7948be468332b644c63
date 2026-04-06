@@ -1,0 +1,31 @@
+streamlit_app.py
+  032a1d8b40c9df82 72-80,100-101,113-117,201-212,214-222,227,230-232,236,240-245,247-250,253-258,260-263,265-281,283-303,308-309,316-317,385-394,407-415,447,483,585,634-639
+README.md
+  032a1d8b40c9df82 32,108
+CARA-BACA-TABEL.md
+  032a1d8b40c9df82 111-128
+.streamlit/config.toml
+  032a1d8b40c9df82 1-2
+recommender.py
+  032a1d8b40c9df82 400-402,422-426,437-439
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "d9bb524de16dc2beacd1f7948be468332b644c63",
+  "prompts": {
+    "032a1d8b40c9df82": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7f8244f2-67f3-4066-8252-6856e75ce456",
+        "model": "composer-2-fast"
+      },
+      "human_author": "Abi FS",
+      "messages": [],
+      "total_additions": 315,
+      "total_deletions": 178,
+      "accepted_lines": 177,
+      "overriden_lines": 0
+    }
+  }
+}
