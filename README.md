@@ -29,7 +29,7 @@
 | | |
 |---|---|
 | **CLI** | Output tabel atau JSON; opsi `--top`, `--fundamentals`, `--period` |
-| **Streamlit** | Dashboard: status snapshot, tanggal penutupan terakhir di data, peringatan unduhan parsial, filter kode, mode top-N / semua LQ45, tampilan ringkas untuk layar kecil |
+| **Streamlit** | Dashboard: tema gelap default + toggle mode terang; status snapshot, tanggal penutupan terakhir di data, peringatan unduhan parsial, filter kode, mode top-N / semua LQ45, tampilan ringkas untuk layar kecil |
 | **Skor** | 0–100 dari persentil lintas emiten (lihat [Cara kerja skor](#cara-kerja-skor)) |
 | **Sumber data** | Harga & metrik via [yfinance](https://github.com/ranaroussi/yfinance) (Yahoo Finance) |
 
@@ -105,6 +105,7 @@ Buka browser di alamat yang ditampilkan (biasanya `http://localhost:8501`).
 
 **Ringkasan opsi di sidebar:**
 
+- **Mode gelap / terang:** toggle di bagian **Tampilan** (default gelap, selaras `.streamlit/config.toml`)
 - **Tampilan baris:** Top N (urut skor) atau semua konstituen LQ45
 - **Fundamental:** mengaktifkan kolom PE, ROE, yield dividen (lebih lambat)
 - **Tampilan ringkas:** menyembunyikan beberapa kolom (nyaman di HP)
